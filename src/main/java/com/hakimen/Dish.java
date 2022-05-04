@@ -1,5 +1,7 @@
 package com.hakimen;
 
+import com.hakimen.register.BlockEntityRegister;
+import com.hakimen.register.BlockRegister;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,12 +21,17 @@ import java.util.stream.Collectors;
 
 @Mod("dish")
 public class Dish {
-
+    public static final String ModId = "dish";
     private static final Logger LOGGER = LogManager.getLogger();
 
     public Dish() {
-        // Register ourselves for server and other game events we are interested in
-        MinecraftForge.EVENT_BUS.register(this);
+        var bus = FMLJavaModLoadingContext.get().getModEventBus();
+        BlockRegister.register(bus);
+        BlockEntityRegister.register(bus);
+
+        bus.addListener(this::setup);
+        bus.addListener(this::enqueueIMC);
+        bus.addListener(this::processIMC);
     }
 
     private void setup(final FMLCommonSetupEvent event) {
